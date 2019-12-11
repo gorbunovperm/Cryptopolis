@@ -1,0 +1,256 @@
+@import "normalize";
+@import "typography";
+@import "variables";
+
+// =================
+// GLOBAL
+// =================
+
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	background-color: #91bfda;
+}
+
+#templates {
+	display: none;
+}
+
+#playground {
+	padding: 30px;
+	display: flex;
+}
+
+.field {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	/*width: 116px;
+	height: 100px;*/
+	margin-right: 4px;
+	overflow: hidden;
+
+	.ground {
+		width: 116px;
+		height: 39px;
+		background: url(../img/ground.png);
+	}
+
+	.building.group-2.level-1 {
+		width: 112px;
+		height: 133px;
+		background: url(../img/realty-2-1.png);
+	}
+
+	.building.group-1.level-2 {
+		width: 112px;
+		height: 250px;
+		background: url(../img/realty-1-2.png);
+	}
+}
+
+.player {
+	position: absolute;
+	background-position: 0;
+	
+	.player-info {
+		position: absolute;
+		font-size: 9px;
+		top: -17px;
+		left: 29px;
+		background: #f7f3f3cf;
+		padding: 1px;
+	}
+}
+
+.walking {
+	transition: left 2s;
+	animation-duration: 1s;
+	animation-name: walking;
+	animation-iteration-count: infinite;
+	animation-timing-function: steps(1);
+}
+
+.hiding {
+	animation-duration: 1s;
+	animation-name: hiding;
+	opacity: 0;
+}
+
+.showing {
+	animation-duration: 1s;
+	animation-name: showing;
+	opacity: 1;
+}
+
+
+
+@keyframes hiding {
+	from {
+		opacity: 1;
+	}
+
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes showing {
+	from {
+		opacity: 0;
+	}
+
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes walking {
+	from {
+		background-position: 0;
+	}
+
+	to {
+		background-position: 0;
+	}
+
+	12% {
+		background-position: -64px;
+	}
+
+	25% {
+		background-position: -128px;
+	}
+
+	37% {
+		background-position: -192px;
+	}
+
+	50% {
+		background-position: -256px;
+	}
+
+	62% {
+		background-position: -320px;
+	}
+
+	75% {
+		background-position: -384px;
+	}
+
+	87% {
+		background-position: -448px 0;
+	}
+}
+
+.player.type-1 {
+	height: 64px;
+	width: 64px;
+	background: url(../img/player-1.png);
+}
+
+.player.type-2 {
+	height: 64px;
+	width: 64px;
+	background: url(../img/player-2.png);
+}
+
+.player.type-3 {
+	height: 64px;
+	width: 64px;
+	background: url(../img/player-3.png);
+}
+
+.player.type-4 {
+	height: 64px;
+	width: 64px;
+	background: url(../img/player-4.png);
+}
+
+.player.type-6 {
+	height: 64px;
+	width: 64px;
+	background: url(../img/player-6.png);
+}
+
+/* Buttons */
+$primary: #33cc33;
+
+
+.wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+  background: transparent;
+  border: none;
+
+  .circle {
+    width: 100px;
+    height: 100px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background-color: $primary;
+    margin: auto;
+    transform: scale(1, 1);
+
+    &.pulse {
+      animation-timing-function: ease;
+      animation: pulse 2s infinite;
+      background-color: lighten($primary, 25%);
+    }
+  }
+
+  svg {
+    fill: darken($primary, 12%);
+    stroke: darken($primary, 12%);
+    stroke-linejoin: round;
+    stroke-width: 5;
+    transition: all 0.3s;
+
+    &:hover {
+      cursor: pointer;
+      fill: darken($primary, 17%);
+      stroke: darken($primary, 17%);
+      transform: scale(1.2, 1.2);
+    }
+  }
+}
+
+
+.wrapper:disabled {
+	.circle {
+		background-color: lightgray;
+
+		&.pulse {
+			display: none;
+		}
+
+		svg {
+			fill: gray;
+			stroke: gray;
+		}
+	}
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1, 1);
+  }
+  25% {
+    transform: scale(1, 1);
+  }
+  50% {
+    transform: scale(1.2, 1.2);
+  }
+  100% {
+    transform: scale(1, 1);
+  }
+}

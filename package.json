@@ -1,0 +1,16 @@
+{
+  "name": "cryptopolis",
+  "version": "1.0.0",
+  "description": "blockchain game",
+  "main": "index.js",
+  "author": "Alexander Gorbunov",
+  "license": "MIT",
+  "dependencies": {
+    "web3": "^1.2.1",
+    "webpack": "^4.41.1",
+    "webpack-cli": "^3.3.9"
+  },
+  "scripts": {
+    "build": "webpack --mode development"
+  }
+}

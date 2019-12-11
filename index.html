@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+  <title>Cryptopolis</title>
+  <link rel="stylesheet" href="src/styles/main.css"/>
+</head>
+
+<body>
+  <div id="playground">
+  </div>
+
+  <div class="sidebar">
+    <h2>Control</h2>
+    <div class="control">  
+      <div id="tasks">Your turn now. Make the moves.</div>
+
+      <div class="wrapper next-turn hidden">
+        <div class="circle pulse"></div>
+        <button id="next-turn" class="circle">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <polygon points="40,30 65,50 40,70"></polygon>
+          </svg>
+        </button>
+      </div>
+
+      <div class="wrapper buy-ticket">
+        <div class="circle pulse"></div>
+        <button id="buy-ticket" class="circle">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+            <polygon points="40,30 65,50 40,70"></polygon>
+          </svg>
+        </button>
+      </div>
+      <input type="text" name="playerName" id="player-name" class="buy-ticket" placeholder="Nickname" required />
+    </div>
+    
+
+    <h2>Stats</h2>
+    <div id="statistics" class="statistics">
+        <div class="generalStat">Tax level: <span id="taxPercent">100%</span></div>
+    </div>
+
+    <h2>Logs</h2>
+    <div class="logs_wrapper">
+      <span id="logs"></span>
+    </div>
+  </div>
+
+  <div id="templates">
+    <div class="player">
+        <div class="avatar"></div>
+        <div class="weapons">
+          <span class="teleport" style="display: none;">&#x1F300;</span>
+        </div>
+        <div class="col">
+          <div class="name">Noname</div>
+          <div class="balance">$0</div>
+          <div class="dice"></div>
+        </div>
+      </div>
+  </div>
+
+
+
+<script src="dist/main.js"></script>
+<script src="src/scripts/platformer.js"></script>
+
+</body>
+</html>

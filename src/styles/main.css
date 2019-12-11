@@ -1,0 +1,1293 @@
+/*! normalize.css v7.0.0 | MIT License | github.com/necolas/normalize.css */
+/* Document
+   ========================================================================== */
+/**
+ * 1. Correct the line height in all browsers.
+ * 2. Prevent adjustments of font size after orientation changes in
+ *    IE on Windows Phone and in iOS.
+ */
+html {
+  line-height: 1.15;
+  /* 1 */
+  -ms-text-size-adjust: 100%;
+  /* 2 */
+  -webkit-text-size-adjust: 100%;
+  /* 2 */
+}
+
+/* Sections
+   ========================================================================== */
+/**
+ * Remove the margin in all browsers (opinionated).
+ */
+body {
+  margin: 0;
+}
+
+/**
+ * Add the correct display in IE 9-.
+ */
+article,
+aside,
+footer,
+header,
+nav,
+section {
+  display: block;
+}
+
+/**
+ * Correct the font size and margin on `h1` elements within `section` and
+ * `article` contexts in Chrome, Firefox, and Safari.
+ */
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+/* Grouping content
+   ========================================================================== */
+/**
+ * Add the correct display in IE 9-.
+ * 1. Add the correct display in IE.
+ */
+figcaption,
+figure,
+main {
+  /* 1 */
+  display: block;
+}
+
+/**
+ * Add the correct margin in IE 8.
+ */
+figure {
+  margin: 1em 40px;
+}
+
+/**
+ * 1. Add the correct box sizing in Firefox.
+ * 2. Show the overflow in Edge and IE.
+ */
+hr {
+  -webkit-box-sizing: content-box;
+          box-sizing: content-box;
+  /* 1 */
+  height: 0;
+  /* 1 */
+  overflow: visible;
+  /* 2 */
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+pre {
+  font-family: monospace, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
+}
+
+/* Text-level semantics
+   ========================================================================== */
+/**
+ * 1. Remove the gray background on active links in IE 10.
+ * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.
+ */
+a {
+  background-color: transparent;
+  /* 1 */
+  -webkit-text-decoration-skip: objects;
+  /* 2 */
+}
+
+/**
+ * 1. Remove the bottom border in Chrome 57- and Firefox 39-.
+ * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
+ */
+abbr[title] {
+  border-bottom: none;
+  /* 1 */
+  text-decoration: underline;
+  /* 2 */
+  -webkit-text-decoration: underline dotted;
+          text-decoration: underline dotted;
+  /* 2 */
+}
+
+/**
+ * Prevent the duplicate application of `bolder` by the next rule in Safari 6.
+ */
+b,
+strong {
+  font-weight: inherit;
+}
+
+/**
+ * Add the correct font weight in Chrome, Edge, and Safari.
+ */
+b,
+strong {
+  font-weight: bolder;
+}
+
+/**
+ * 1. Correct the inheritance and scaling of font size in all browsers.
+ * 2. Correct the odd `em` font sizing in all browsers.
+ */
+code,
+kbd,
+samp {
+  font-family: monospace, monospace;
+  /* 1 */
+  font-size: 1em;
+  /* 2 */
+}
+
+/**
+ * Add the correct font style in Android 4.3-.
+ */
+dfn {
+  font-style: italic;
+}
+
+/**
+ * Add the correct background and color in IE 9-.
+ */
+mark {
+  background-color: #ff0;
+  color: #000;
+}
+
+/**
+ * Add the correct font size in all browsers.
+ */
+small {
+  font-size: 80%;
+}
+
+/**
+ * Prevent `sub` and `sup` elements from affecting the line height in
+ * all browsers.
+ */
+sub,
+sup {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+}
+
+sub {
+  bottom: -0.25em;
+}
+
+sup {
+  top: -0.5em;
+}
+
+/* Embedded content
+   ========================================================================== */
+/**
+ * Add the correct display in IE 9-.
+ */
+audio,
+video {
+  display: inline-block;
+}
+
+/**
+ * Add the correct display in iOS 4-7.
+ */
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+
+/**
+ * Remove the border on images inside links in IE 10-.
+ */
+img {
+  border-style: none;
+}
+
+/**
+ * Hide the overflow in IE.
+ */
+svg:not(:root) {
+  overflow: hidden;
+}
+
+/* Forms
+   ========================================================================== */
+/**
+ * 1. Change the font styles in all browsers (opinionated).
+ * 2. Remove the margin in Firefox and Safari.
+ */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: sans-serif;
+  /* 1 */
+  font-size: 100%;
+  /* 1 */
+  line-height: 1.15;
+  /* 1 */
+  margin: 0;
+  /* 2 */
+}
+
+/**
+ * Show the overflow in IE.
+ * 1. Show the overflow in Edge.
+ */
+button,
+input {
+  /* 1 */
+  overflow: visible;
+}
+
+/**
+ * Remove the inheritance of text transform in Edge, Firefox, and IE.
+ * 1. Remove the inheritance of text transform in Firefox.
+ */
+button,
+select {
+  /* 1 */
+  text-transform: none;
+}
+
+/**
+ * 1. Prevent a WebKit bug where (2) destroys native `audio` and `video`
+ *    controls in Android 4.
+ * 2. Correct the inability to style clickable types in iOS and Safari.
+ */
+button,
+html [type="button"],
+[type="reset"],
+[type="submit"] {
+  -webkit-appearance: button;
+  /* 2 */
+}
+
+/**
+ * Remove the inner border and padding in Firefox.
+ */
+button::-moz-focus-inner,
+[type="button"]::-moz-focus-inner,
+[type="reset"]::-moz-focus-inner,
+[type="submit"]::-moz-focus-inner {
+  border-style: none;
+  padding: 0;
+}
+
+/**
+ * Restore the focus styles unset by the previous rule.
+ */
+button:-moz-focusring,
+[type="button"]:-moz-focusring,
+[type="reset"]:-moz-focusring,
+[type="submit"]:-moz-focusring {
+  outline: 1px dotted ButtonText;
+}
+
+/**
+ * Correct the padding in Firefox.
+ */
+fieldset {
+  padding: 0.35em 0.75em 0.625em;
+}
+
+/**
+ * 1. Correct the text wrapping in Edge and IE.
+ * 2. Correct the color inheritance from `fieldset` elements in IE.
+ * 3. Remove the padding so developers are not caught out when they zero out
+ *    `fieldset` elements in all browsers.
+ */
+legend {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  /* 1 */
+  color: inherit;
+  /* 2 */
+  display: table;
+  /* 1 */
+  max-width: 100%;
+  /* 1 */
+  padding: 0;
+  /* 3 */
+  white-space: normal;
+  /* 1 */
+}
+
+/**
+ * 1. Add the correct display in IE 9-.
+ * 2. Add the correct vertical alignment in Chrome, Firefox, and Opera.
+ */
+progress {
+  display: inline-block;
+  /* 1 */
+  vertical-align: baseline;
+  /* 2 */
+}
+
+/**
+ * Remove the default vertical scrollbar in IE.
+ */
+textarea {
+  overflow: auto;
+}
+
+/**
+ * 1. Add the correct box sizing in IE 10-.
+ * 2. Remove the padding in IE 10-.
+ */
+[type="checkbox"],
+[type="radio"] {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  /* 1 */
+  padding: 0;
+  /* 2 */
+}
+
+/**
+ * Correct the cursor style of increment and decrement buttons in Chrome.
+ */
+[type="number"]::-webkit-inner-spin-button,
+[type="number"]::-webkit-outer-spin-button {
+  height: auto;
+}
+
+/**
+ * 1. Correct the odd appearance in Chrome and Safari.
+ * 2. Correct the outline style in Safari.
+ */
+[type="search"] {
+  -webkit-appearance: textfield;
+  /* 1 */
+  outline-offset: -2px;
+  /* 2 */
+}
+
+/**
+ * Remove the inner padding and cancel buttons in Chrome and Safari on macOS.
+ */
+[type="search"]::-webkit-search-cancel-button,
+[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+}
+
+/**
+ * 1. Correct the inability to style clickable types in iOS and Safari.
+ * 2. Change font properties to `inherit` in Safari.
+ */
+::-webkit-file-upload-button {
+  -webkit-appearance: button;
+  /* 1 */
+  font: inherit;
+  /* 2 */
+}
+
+/* Interactive
+   ========================================================================== */
+/*
+ * Add the correct display in IE 9-.
+ * 1. Add the correct display in Edge, IE, and Firefox.
+ */
+details,
+menu {
+  display: block;
+}
+
+/*
+ * Add the correct display in all browsers.
+ */
+summary {
+  display: list-item;
+}
+
+/* Scripting
+   ========================================================================== */
+/**
+ * Add the correct display in IE 9-.
+ */
+canvas {
+  display: inline-block;
+}
+
+/**
+ * Add the correct display in IE.
+ */
+template {
+  display: none;
+}
+
+/* Hidden
+   ========================================================================== */
+/**
+ * Add the correct display in IE 10-.
+ */
+[hidden] {
+  display: none;
+}
+
+body {
+  font-family: "Tahoma", sans-serif;
+  font-weight: 400;
+  font-size: 10px;
+  color: #080808;
+  text-transform: uppercase;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: #91bfda;
+}
+
+
+#templates {
+  display: none;
+}
+
+#playground {
+  padding: 30px 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-wrap: wrap;
+  width: 820px;
+  float: left;
+}
+
+.field {
+  width: 76px;
+  height: 243px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: end;
+      -ms-flex-pack: end;
+          justify-content: flex-end;
+  overflow: hidden;
+  border-bottom: 2px solid rgba(0,0,0,0);
+  margin-right: 3px;
+}
+
+.field .ground {
+  width: 76px;
+  height: 30px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.field .ground {
+  background-image: url(../img/ground.png);
+}
+
+.field.owner-0.buildUp .ground,
+.field.preliminary-owner.buildUp .ground,
+.field.developed .ground {
+  background-image: url(../img/ground-owned.png);
+}
+
+.loader {
+  display: none;
+  opacity: 0.7;
+  margin: 10px auto;
+  position: absolute;
+}
+
+.field.developing .loader {
+  display: block;
+}
+
+.field .building.level-0 {
+  background-image: url(../img/tree-set.png);
+  background-position: 0px bottom;
+  background-size: 256px;
+}
+
+.field.owner-0 .building.level-0{
+  background-size: 256px;
+}
+
+.field.developed .building.level-0 {
+  background-image: none;
+}
+
+.field:nth-child(odd) .building.level-0 {
+  background-position: -128px bottom;
+}
+
+.field:nth-child(3n) .building.level-0 {
+  background-position: -192px bottom;
+}
+
+.field:nth-child(7n) .building.level-0 {
+  background-position: -64px bottom;
+}
+
+.field .building.casino {
+  background-image: url(../img/casino.png);
+}
+
+.field .building.tax {
+  background-image: url(../img/realty-2-1.png);
+}
+
+.field .building {
+  margin: 0 auto;
+  background-position: bottom;
+  background-repeat: no-repeat;
+  height: 193px;
+  width: 68px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+}
+
+.field:hover .field_description {
+  visibility: visible;
+}
+
+.field.group-1 .building.level-1,
+.field.group-4 .building.level-1,
+.field.group-7 .building.level-1 {
+  background-image: url(../img/realty-1-1.png);
+}
+
+.field.group-1 .building.level-2,
+.field.group-4 .building.level-2,
+.field.group-7 .building.level-2 {
+  background-image: url(../img/realty-1-2.png);
+}
+
+.field.group-1 .building.level-3,
+.field.group-4 .building.level-3,
+.field.group-7 .building.level-3 {
+  background-image: url(../img/realty-1-3.png);
+}
+
+.field.group-1 .building.level-4,
+.field.group-4 .building.level-4,
+.field.group-7 .building.level-4 {
+  background-image: url(../img/realty-1-4.png);
+}
+
+.field.group-2 .building.level-1,
+.field.group-5 .building.level-1,
+.field.group-8 .building.level-1 {
+  background-image: url(../img/realty-2-1.png);
+}
+
+.field.group-2 .building.level-2,
+.field.group-5 .building.level-2,
+.field.group-8 .building.level-2 {
+  background-image: url(../img/realty-2-2.png);
+}
+
+.field.group-2 .building.level-3,
+.field.group-5 .building.level-3,
+.field.group-8 .building.level-3 {
+  background-image: url(../img/realty-2-3.png);
+}
+
+.field.group-2 .building.level-4,
+.field.group-5 .building.level-4,
+.field.group-8 .building.level-4 {
+  background-image: url(../img/realty-2-4.png);
+}
+
+.field.group-3 .building.level-1,
+.field.group-6 .building.level-1 {
+  background-image: url(../img/realty-3-1.png);
+}
+
+.field.group-3 .building.level-2,
+.field.group-6 .building.level-2 {
+  background-image: url(../img/realty-3-2.png);
+}
+
+.field.group-3 .building.level-3,
+.field.group-6 .building.level-3 {
+  background-image: url(../img/realty-3-3.png);
+}
+
+.field.group-3 .building.level-4,
+.field.group-6 .building.level-4 {
+  background-image: url(../img/realty-3-4.png);
+}
+
+button {
+  cursor: pointer;
+}
+
+.field.buildUp .building {
+  margin: 0 auto;
+  /*opacity: 0.5;*/
+  cursor: pointer;
+}
+
+.field.owner-0.buildUp .building.level-0,
+.field.preliminary-owner.buildUp .building.level-0 {
+  background: none;
+  margin: 0 auto;
+  /*opacity: 0.5;*/
+}
+
+.field.buildUp .building.level-0 {
+  background-image: url(../img/realty-1-1.png);
+  background-position: 0px bottom;
+  background-size: auto;
+}
+
+.field.buildUp .building.level-1 {
+  background-image: url(../img/realty-1-2.png);
+  background-position: 0px bottom;
+}
+
+.field.buildUp .building.level-2 {
+  background-image: url(../img/realty-1-3.png);
+  background-position: 0px bottom;
+}
+
+.field.buildUp .building.level-3 {
+  background-image: url(../img/realty-1-4.png);
+  background-position: 0px bottom;
+}
+
+#playground .player {
+  position: absolute;
+  background-position: 0;
+  z-index: 1;
+}
+
+#playground .player.myself {
+  /*-webkit-filter: drop-shadow(2px 0px 0px rgb(255, 0, 0));
+  filter: drop-shadow(2px 0px 0px rgb(255, 0, 0));*/
+}
+
+
+
+#playground .player .weapons {
+  width: 38px;
+  left: -16px;
+  position: absolute;
+}
+
+#playground .player .weapons div {
+  float: right;
+}
+
+#playground .player .player-info {
+  position: absolute;
+  font-size: 9px;
+  top: -3em;
+  left: 7px;
+  line-height: 1.9em;
+}
+
+#playground .player .player-info .decreased {
+  font-size: 13px;
+  color: red;
+  position: absolute;
+  top: 0px;
+  -webkit-transition: top 5s;
+  transition: top 5s;
+  opacity: 0;
+}
+
+#playground .player .player-info .decreased.decreasing {
+  opacity: 1;
+}
+
+
+
+@keyframes decreasing {
+  from {
+    top: auto;
+  }
+  to {
+    top: -100px;
+  }
+}
+
+.player-info .nickname {
+  color: black;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+  background: #f7f3f3cf;
+  padding: 1px 5px;
+}
+
+.walking {
+  -webkit-transition: left 2s;
+  transition: left 2s;
+
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-name: walking;
+          animation-name: walking;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+  -webkit-animation-timing-function: steps(1);
+          animation-timing-function: steps(1);
+}
+
+.hiding {
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-name: hiding;
+          animation-name: hiding;
+  opacity: 0;
+}
+
+.showing {
+  -webkit-animation-duration: 1s;
+          animation-duration: 1s;
+  -webkit-animation-name: showing;
+          animation-name: showing;
+  opacity: 1;
+}
+
+@-webkit-keyframes hiding {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes hiding {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@-webkit-keyframes showing {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes showing {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@-webkit-keyframes walking {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: 0;
+  }
+  12% {
+    background-position: -64px;
+  }
+  25% {
+    background-position: -128px;
+  }
+  37% {
+    background-position: -192px;
+  }
+  50% {
+    background-position: -256px;
+  }
+  62% {
+    background-position: -320px;
+  }
+  75% {
+    background-position: -384px;
+  }
+  87% {
+    background-position: -448px 0;
+  }
+}
+
+@keyframes walking {
+  from {
+    background-position: 0;
+  }
+  to {
+    background-position: 0;
+  }
+  12% {
+    background-position: -64px;
+  }
+  25% {
+    background-position: -128px;
+  }
+  37% {
+    background-position: -192px;
+  }
+  50% {
+    background-position: -256px;
+  }
+  62% {
+    background-position: -320px;
+  }
+  75% {
+    background-position: -384px;
+  }
+  87% {
+    background-position: -448px 0;
+  }
+}
+
+.sidebar {
+  float: left;
+  width: 193px;
+}
+
+.sidebar h2 {
+  margin-top: 20px;
+}
+
+.control, .logs_wrapper, .statistics {
+  padding: 10px 0px;
+}
+
+#statistics .player {
+  display: flex;
+  padding: 10px;
+}
+
+#statistics .player.myself {
+  background-color: rgba(255,255,255,0.2);
+}
+
+#statistics .player.lost .name,
+#statistics .player.lost .balance {
+  text-decoration: line-through;
+  text-decoration-color: red;
+}
+
+#statistics .player.lost .avatar {
+  opacity: 0.5;
+}
+
+#statistics .player .dice {
+  background: url(../img/dice.png);
+  background-size: contain;
+  width: 32px;
+  height: 32px;
+  display: none;
+}
+
+#statistics .player.croupier .dice {
+  display: block;
+}
+
+#statistics .player .balance {
+  font-size: 25px;
+}
+
+#statistics .player .weapons .teleport {
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
+  cursor: default;
+  display: none;
+}
+
+#statistics .player .weapons .diplomacy {
+  width: 13px;
+  height: 30px;
+  background-image: url(../img/diplomacy.png);
+  background-size: contain;
+  display: none;
+}
+
+#statistics .player .col {
+  float: left;
+}
+
+#statistics .player .avatar {
+  height: 74px;
+  width: 54px;
+  border-bottom: 3px solid red;
+  background-repeat: no-repeat;
+  margin: 0 10px;
+  background-position: -8px;
+}
+
+#statistics .player.type-0 .avatar {
+  border-color: red;
+  background-image: url(../img/player-0.png);  
+}
+
+#statistics .player.type-1 .avatar {
+  border-color: blue;
+  background-image: url(../img/player-1.png);  
+}
+
+#statistics .player.type-2 .avatar {
+  border-color: green;
+  background-image: url(../img/player-2.png);  
+}
+
+#statistics .player.type-3 .avatar {
+  border-color: yellow;
+  background-image: url(../img/player-3.png);  
+}
+
+#statistics .generalStat {
+  padding: 5px 0px;
+}
+
+
+#playground .player.type-0 {
+  height: 64px;
+  width: 64px;
+  background: url(../img/player-0.png);
+}
+
+#playground .player.type-1 {
+  height: 64px;
+  width: 64px;
+  background: url(../img/player-1.png);
+}
+
+#playground .player.type-2 {
+  height: 64px;
+  width: 64px;
+  background: url(../img/player-2.png);
+}
+
+#playground .player.type-3 {
+  height: 64px;
+  width: 64px;
+  background: url(../img/player-3.png);
+}
+
+#playground .player.type-4 {
+  height: 64px;
+  width: 64px;
+  background: url(../img/player-4.png);
+}
+
+#playground .player.type-6 {
+  height: 64px;
+  width: 64px;
+  background: url(../img/player-6.png);
+}
+/*# sourceMappingURL=main.css.map */
+
+.field_description {
+  font-size: 10px;
+  color: black;
+  background-color: rgba(181, 255, 135, 0.74);
+  visibility: hidden;
+  position: absolute;
+  z-index: 2;
+  padding: 10px;
+  line-height: 15px;
+  box-shadow: 2px 2px 0 black;
+  min-width: 76px;
+  border-top: 1px solid rgb(181,255,135);
+  border-left: 1px solid rgb(181,255,135);
+}
+
+button:focus {
+  outline: none;
+}
+
+.field_description button {
+  background-color: #c7c7c7;
+  border-color: gray;
+  margin-right: 4px;
+}
+
+.field_description .teleportBtn {
+  font-size: 15px;
+  padding: 5px;
+  width: 34px;
+  height: 34px;
+}
+
+.field_description .teleportBtn[disabled="true"] {
+  display: none;
+}
+
+.upgradeBtn {
+  font-size: 15px;
+  padding: 5px;
+  width: 34px;
+  height: 34px;
+}
+
+.upgradeBtn[disabled="true"] {
+  display: none;
+}
+
+.field.preliminary-owner-1 .ground,
+.field.owner-1 .ground{
+  height: 30px;
+  border-bottom: 4px solid red;
+  border-radius: 6px;
+}
+
+.field.preliminary-owner-2 .ground,
+.field.owner-2 .ground{
+  height: 30px;
+  border-bottom: 4px solid blue;
+  border-radius: 6px;
+}
+
+.field.preliminary-owner-3 .ground,
+.field.owner-3 .ground{
+  height: 30px;
+  border-bottom: 4px solid green;
+  border-radius: 6px;
+}
+
+.field.preliminary-owner-4 .ground,
+.field.owner-4 .ground{
+  height: 30px;
+  border-bottom: 4px solid yellow;
+  border-radius: 6px;
+}
+
+.field.preliminary-owner .ground {
+  -webkit-animation-duration: 2s;
+          animation-duration: 2s;
+  -webkit-animation-name: preliminary-owner;
+          animation-name: preliminary-owner;
+  -webkit-animation-iteration-count: infinite;
+          animation-iteration-count: infinite;
+}
+
+
+.logs_wrapper {
+  background: rgba(0,0,0,0.2);
+  margin-top: 10px;
+  padding: 10px;
+  height: 300px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#logs {
+  font-size: 11px;
+  text-transform: none;
+}
+
+#logs .nickname {
+  border-bottom: 1px dashed black;
+}
+
+#logs .bold {
+  font-weight: bold;
+}
+
+#logs .block {
+  margin-bottom: 10px;
+}
+
+#logs .blockNumber {
+  color: #637496;
+}
+
+#logs .lost {
+  color: red;
+}
+
+#logs .won {
+  color: green;
+}
+
+#logs .event {
+  display: inline-block;
+  padding-bottom: 6px;
+}
+
+#logs .event .reason {
+  background-color: #6d90a3;
+  font-weight: normal;
+  margin-left: 10px;
+  font-size: 90%;
+}
+
+@keyframes preliminary-owner {
+  50% {
+    border-color: rgba(0,0,255,0.1);
+  }
+}
+
+@-webkit-keyframes preliminary-owner {
+  50% {
+    border-color: rgba(0,0,255,0.1);
+  }
+}
+
+/* Buttons */
+
+#next-turn {
+  border: none;
+}
+
+#buy-ticket {
+  border: none;
+}
+
+#player-name {
+  width: 80px;
+  font-size: 17px;
+  margin: 13px 0px;
+}
+
+.wrapper.next-turn {
+  width: 100px;
+  height: 150px;
+  margin-left: 0px;
+}
+
+.wrapper.next-turn .circle {
+  width: 100px;
+  height: 100px;
+}
+
+.wrapper.buy-ticket {
+  width: 70px;
+  height: 70px;
+  float: left;
+}
+
+.wrapper.buy-ticket .circle {
+  width: 50px;
+  height: 50px;
+}
+
+.wrapper {
+  position: relative;
+  width: 150px;
+  height: 150px;
+  margin: 0 auto;
+}
+
+.wrapper .circle {
+  width: 100px;
+  height: 100px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 20%;
+  background-color: #33cc33;
+  margin: auto;
+  -webkit-transform: scale(1, 1);
+          transform: scale(1, 1);
+}
+
+.wrapper .circle.pulse {
+  -webkit-animation-timing-function: ease;
+          animation-timing-function: ease;
+  -webkit-animation: pulse 2s infinite;
+          animation: pulse 2s infinite;
+  background-color: #99e699;
+}
+
+.wrapper svg {
+  fill: #279b27;
+  stroke: #279b27;
+  stroke-linejoin: round;
+  stroke-width: 5;
+  -webkit-transition: all 0.3s;
+  transition: all 0.3s;
+}
+
+.wrapper svg:hover {
+  cursor: pointer;
+  fill: #228722;
+  stroke: #228722;
+  -webkit-transform: scale(1.2, 1.2);
+          transform: scale(1.2, 1.2);
+}
+
+.wrapper.disabled .circle {
+  background-color: lightgray;
+}
+
+.wrapper.disabled .circle.pulse {
+  display: none;
+}
+
+.wrapper.disabled .circle svg {
+  fill: gray;
+  stroke: gray;
+}
+
+@-webkit-keyframes pulse {
+  0% {
+    -webkit-transform: scale(1, 1);
+            transform: scale(1, 1);
+  }
+  25% {
+    -webkit-transform: scale(1, 1);
+            transform: scale(1, 1);
+  }
+  50% {
+    -webkit-transform: scale(1.2, 1.2);
+            transform: scale(1.2, 1.2);
+  }
+  100% {
+    -webkit-transform: scale(1, 1);
+            transform: scale(1, 1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    -webkit-transform: scale(1, 1);
+            transform: scale(1, 1);
+  }
+  25% {
+    -webkit-transform: scale(1, 1);
+            transform: scale(1, 1);
+  }
+  50% {
+    -webkit-transform: scale(1.2, 1.2);
+            transform: scale(1.2, 1.2);
+  }
+  100% {
+    -webkit-transform: scale(1, 1);
+            transform: scale(1, 1);
+  }
+}
+
+
+.hidden {
+  display: none;
+}
