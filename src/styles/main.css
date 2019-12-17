@@ -903,10 +903,18 @@ button {
   width: 32px;
   height: 32px;
   display: none;
+  color: #7aff00;
+  font-size: 12px;
+  padding-top: 18px;
 }
 
 #statistics .player.croupier .dice {
   display: block;
+}
+
+#statistics .player.canBecomeCroupier .dice {
+  display: block;
+  opacity: 0.5;
 }
 
 #statistics .player .balance {
@@ -962,6 +970,21 @@ button {
   background-image: url(../img/player-3.png);  
 }
 
+#statistics .player.type-4 .avatar {
+  border-color: purple;
+  background-image: url(../img/player-4.png);  
+}
+
+#statistics .player.type-5 .avatar {
+  border-color: black;
+  background-image: url(../img/player-5.png);  
+}
+
+#statistics .player.type-6 .avatar {
+  border-color: darkgoldenrod;
+  background-image: url(../img/player-6.png);  
+}
+
 #statistics .generalStat {
   padding: 5px 0px;
 }
@@ -995,6 +1018,12 @@ button {
   height: 64px;
   width: 64px;
   background: url(../img/player-4.png);
+}
+
+#playground .player.type-5 {
+  height: 64px;
+  width: 64px;
+  background: url(../img/player-5.png);
 }
 
 #playground .player.type-6 {

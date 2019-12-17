@@ -23,6 +23,7 @@ var platformer = (() => { // module pattern
     const EMOJI_SLOT = '&#x1f3b0;';
     const RIGHT_ARROW = '<span class="lost">&rarr;</span>';
     const LEFT_ARROW = '<span class="won">&larr;</span>';
+    const EMOJI_TIMER = '&#x23F3;';
 
     const Reason = { CroupierPenalty: 0, FieldSettlement: 1, NewRound: 2, Upgrade: 3, Downgrade: 4, FieldAcquisition: 5, CasinoLosing: 6, CasinoWinning: 7 };
 
@@ -212,12 +213,25 @@ var platformer = (() => { // module pattern
             }
 
             fieldElement.classList.remove(`owner-${outdatedField.owner}`);
-            fieldElement.classList.add(`owner-${updatedField.owner}`);
-            fieldElement.dataset.owner = updatedField.owner;
-
             let building = fieldElement.getElementsByClassName('building')[0];
             building.classList.remove(`level-${outdatedField.level}`);
-            building.classList.add(`level-${updatedField.level}`);
+
+            switch(parseInt(updatedField.type)) {
+                case FIELD_CHANCE:
+                    building.classList.add('casino');
+                    fieldElement.classList.add('developed');
+                    break;
+                case FIELD_FEE:
+                    building.classList.add('tax');
+                    fieldElement.classList.add('developed');
+                    break;
+                case FIELD_COMPANY:
+                    building.classList.add(`level-${updatedField.level}`);
+                    fieldElement.classList.add(`owner-${updatedField.owner}`);
+                    fieldElement.classList.add('group','group-1');
+                    fieldElement.dataset.owner = updatedField.owner;
+                    break;
+            }
 
             let ground = fieldElement.getElementsByClassName('ground')[0];
 
@@ -641,6 +655,7 @@ var platformer = (() => { // module pattern
             let croupierElement = statisticsElement.getElementsByClassName('croupier')[0];
             if (croupierElement != undefined) {
                 croupierElement.className = croupierElement.className.replace('croupier', '');
+                croupierElement.getElementsByClassName('dice')[0].innerHTML = '';
             }
 
             let playerStatistics = statisticsElement.getElementsByClassName(`type-${croupierId}`)[0];
@@ -661,7 +676,9 @@ var platformer = (() => { // module pattern
         let croupierId = window.croupierId;
         let transactionPending = window.movesTransactionPending == undefined ? false : window.movesTransactionPending;
 
-        if (croupierId != window.currentPlayerId || transactionPending) {
+        window.croupierExpired = window.croupierExpired == undefined ? false : window.croupierExpired;
+
+        if (!window.croupierExpired && (croupierId != window.currentPlayerId || transactionPending)) {
             makeMovesBtn.setAttribute('disabled', 'true');
             wrapper.classList.add('disabled');
         } else {
@@ -673,6 +690,35 @@ var platformer = (() => { // module pattern
     let taxLevelUpdated = (taxPercent) => {
         let percentElement = document.getElementById('taxPercent');
         percentElement.innerText = `${taxPercent}%`;
+    }
+
+    let updateCroupierExpiration = (blocksLeft) => {
+        let diceElement = document.querySelector('#statistics .player.croupier .dice');
+        if (diceElement == undefined) {
+            return;
+        }
+        let bl = blocksLeft < -99 ? -99 : blocksLeft;
+        diceElement.innerHTML = `${EMOJI_TIMER}${bl}`;
+
+        if (blocksLeft < 0) {
+            window.croupierExpired = true;
+            let playersElements = document.querySelectorAll('#statistics .player');
+            [].forEach.call(playersElements, function(element) {
+                if (!element.classList.contains('croupier')) {
+                    element.classList.add('canBecomeCroupier');
+                }
+            });
+        } else {
+            window.croupierExpired = false;
+            let croupierElements = document.querySelectorAll('#statistics .player.canBecomeCroupier');
+            if (croupierElements == undefined) {
+                return;
+            }
+            [].forEach.call(croupierElements, function(element) {
+                element.classList.remove('canBecomeCroupier');
+            });
+        }
+        toggleMakeMovesBtn();
     }
 
     return {
@@ -689,6 +735,7 @@ var platformer = (() => { // module pattern
         finalizeRequestingUpgrade: finalizeRequestingUpgrade,
         playerLost: playerLost,
         taxLevelUpdated: taxLevelUpdated,
-        toggleMakeMovesBtn: toggleMakeMovesBtn
+        toggleMakeMovesBtn: toggleMakeMovesBtn,
+        updateCroupierExpiration: updateCroupierExpiration
     }
 })();
