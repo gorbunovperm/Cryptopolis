@@ -2,53 +2,42 @@ var map = { "fields": []};
 var currentPlayerId;
 var gasProvided_makeMoves = 8000000;
 var gasPrice = 22000000000;
-const TICKET_PRICE = 1000000000000000000;
+const TICKET_PRICE = 1000000000000000; // 0.001 eth
 var gameStarted = false;
 var maxPlayers = 2;
 var currentBlockNumber = 0;
 var croupierExpiration = 0;
 
-
-
 window.addEventListener('load', async function() {
 
 	const Web3 = require('web3');
 	var Accounts = require('web3-eth-accounts');
-	const provider = Web3.givenProvider;
-	//new Web3.providers.WebsocketProvider("wss://ropsten.infura.io/ws/v3/311aeb20e7cb4c22914ad2b3f2a574f8");
+	var provider = new Web3.providers.WebsocketProvider('wss://kovan.infura.io/ws/v3/311aeb20e7cb4c22914ad2b3f2a574f8');
 
 	const web3 = new Web3(provider);
 
-	var defaultAccount;
+	var accountAddress;
 	var events = {};
+	var account;
 
 	await web3.eth.net.isListening()
 		.then(async () => {
-			console.log('web3 is connected');
-			await ethereum.enable();
-			web3.eth.getAccounts().then((res) => {
-				accounts = res;
-				defaultAccount = accounts[0].toLowerCase();
-			});
+			console.log('Web3 is connected');
+			initAccount();
 			setInterval(tick, 1000);
 		})
 		.catch(e => console.log('Wow. Something went wrong'));
 
-	ethereum.on('accountsChanged', function (accounts) {
-		defaultAccount = accounts[0].toLowerCase();
-		window.currentPlayerId = window.platformer.players[defaultAccount].type;
+	function initAccount() {
+		account = JSON.parse(localStorage.getItem('account'));
+		if(account === null) {
+			account = web3.eth.accounts.create();
+			localStorage.setItem('account', JSON.stringify(account));
+		}
+		accountAddress = account.address.toLowerCase();
+	}
 
-		console.log(`Account changed to: ${defaultAccount}, current user id change to ${window.currentPlayerId}`);
-	});
-
-
-	//const contract_Address = "0x0810a219665d433A5e619a4f972346425b619041"; // room1 2max
-	//const contract_Address = "0xEb0c6e19cA14eBf0B2FeBa2b04bC179FbDdeEf39"; // room2 2max
-	//const contract_Address = "0x097F8B83dC4F7D16820B5a2825308dDDda585B3C"; // room3 3max
-	//const contract_Address = "0xdBDaF476F4140Ee3310f2406A2653FCd3B79424e"; // room4 4max
-	//const contract_Address = "0x207543b36abd7FBB3D6F1e4a228D9234Fb87b3E3"; // room5 5max
-	//const contract_Address = "0x120c2A3b9AEDe2a4f64639aA13abbd3e4fEaE24c"; // room6 6max
-	const contract_Address = "0xc1559B4e9335bEDAf1E34399E2Ce738b7f478ea8"; // private_2max
+	const contractAddress = "0x950fcc965FAEA17e37fE94535d6Ec9044D1BaC84"; // private_2max kovan
 
 	const cryptopolisAbi = [
 		{
@@ -628,7 +617,7 @@ window.addEventListener('load', async function() {
 		}
 	];
 
-	var cryptopolisContract = new web3.eth.Contract(cryptopolisAbi, contract_Address);
+	var cryptopolisContract = new web3.eth.Contract(cryptopolisAbi, contractAddress);
 
 	var startBlockNumber = 0;
 	var currentGameId = 0;
@@ -645,15 +634,27 @@ window.addEventListener('load', async function() {
 		window.movesTransactionPending = true;
 		window.platformer.toggleMakeMovesBtn();
 
-		// TODO: Is provided gas speed up the popup window?
-		cryptopolisContract.methods.makeMoves().send({
-			from: defaultAccount,
-			gasPrice: gasPrice,
-			gas: gasProvided_makeMoves 
-		}).then((res) => {
-			console.log('Move maked.', res);
-			window.movesTransactionPending = false;
-			window.platformer.toggleMakeMovesBtn();
+		const txMakeMoves = {
+			from: accountAddress,
+			to: contractAddress,
+			gas: gasProvided_makeMoves,
+			data: cryptopolisContract.methods.makeMoves().encodeABI()
+		};
+
+		const signPromise = web3.eth.accounts.signTransaction(txMakeMoves, account.privateKey);
+
+		signPromise.then((signedTx) => {
+			const sentTx = web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
+			sentTx.on("receipt", receipt => {
+				console.log('Move maked.', receipt);
+				window.movesTransactionPending = false;
+				window.platformer.toggleMakeMovesBtn();
+			});
+			sentTx.on("error", err => {
+				window.movesTransactionPending = false;
+				window.platformer.toggleMakeMovesBtn();
+				console.log(err);
+			});
 		}).catch((err) => {
 			console.log('Move rejected.', err);
 			window.movesTransactionPending = false;
@@ -663,9 +664,30 @@ window.addEventListener('load', async function() {
 
 	document.getElementById('buy-ticket').addEventListener("click", (event) => {
 		let playerName = document.getElementById('player-name').value;
-		cryptopolisContract.methods.buyTicket(playerName).send({from: defaultAccount, value: TICKET_PRICE}).then((res) => {
-		});
+
+		const txBuyTicket = {
+			from: accountAddress,
+			to: contractAddress,
+			gas: gasProvided_makeMoves,
+			value: TICKET_PRICE,
+			data: cryptopolisContract.methods.buyTicket(playerName).encodeABI()
+		};
+
+		const signPromise = web3.eth.accounts.signTransaction(txBuyTicket, account.privateKey);
+
+		signPromise.then((signedTx) => {
+			const sentTx = web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
+			sentTx.on("receipt", receipt => {
+			  console.log(receipt);
+			});
+			sentTx.on("error", err => {
+			  console.log(err);
+			});
+		  }).catch((err) => {
+			console.log(err);
+		  });
 	});
+
 
 	function addFieldsEvents() {
 		let buildUp_buttons = document.querySelectorAll(`.field .upgradeBtn`);
@@ -674,11 +696,30 @@ window.addEventListener('load', async function() {
 			buildUp_buttons[i].addEventListener("click", function (event) {
 				let fieldId = event.currentTarget.dataset.fieldId;
 				if (window.platformer.prepareRequestingUpgrade(fieldId)) {
-					cryptopolisContract.methods.buildUp(fieldId).send({from: defaultAccount}).then((res) => {
-						console.log('builing request sended.');
+					const txBuildUp = {
+						from: accountAddress,
+						to: contractAddress,
+						gas: gasProvided_makeMoves,
+						data: cryptopolisContract.methods.buildUp(fieldId).encodeABI()
+					};
+			
+					const signPromise = web3.eth.accounts.signTransaction(txBuildUp, account.privateKey);
+			
+					signPromise.then((signedTx) => {
+						const sentTx = web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
+						sentTx.on("receipt", receipt => {
+							console.log('builing request sended.');
+							console.log(receipt);
+						});
+						sentTx.on("error", err => {
+							window.platformer.finalizeRequestingUpgrade(fieldId);
+							console.log('builing request failed.');
+							console.log(err);
+						});
 					}).catch((err) => {
-						console.log('builing request failed.');
 						window.platformer.finalizeRequestingUpgrade(fieldId);
+						console.log('builing request failed.');
+						console.log(err);
 					});
 				}
 
@@ -691,10 +732,28 @@ window.addEventListener('load', async function() {
 			teleport_buttons[i].addEventListener("click", function (event) {
 				let fieldId = event.currentTarget.dataset.fieldId;
 
-				cryptopolisContract.methods.teleport(fieldId).send({from: defaultAccount}).then((res) => {
-					console.log('teleport request sended.');
+				const txBuildUp = {
+					from: accountAddress,
+					to: contractAddress,
+					gas: gasProvided_makeMoves,
+					data: cryptopolisContract.methods.teleport(fieldId).encodeABI()
+				};
+		
+				const signPromise = web3.eth.accounts.signTransaction(txBuildUp, account.privateKey);
+		
+				signPromise.then((signedTx) => {
+					const sentTx = web3.eth.sendSignedTransaction(signedTx.raw || signedTx.rawTransaction);
+					sentTx.on("receipt", receipt => {
+						console.log('teleport request sended.');
+						console.log(receipt);
+					});
+					sentTx.on("error", err => {
+						console.log('teleport request failed.');
+						console.log(err);
+					});
 				}).catch((err) => {
 					console.log('teleport request failed.');
+					console.log(err);
 				});
 
 			}, false);
@@ -773,7 +832,7 @@ window.addEventListener('load', async function() {
 	
 				for (let i = 0; i < playersCount; i++) {
 					cryptopolisContract.methods.getPlayer(i).call().then( (player) => {
-						if (player.addr.toLowerCase() == defaultAccount) {
+						if (player.addr.toLowerCase() == accountAddress) {
 							window.currentPlayerId = i;
 							resolve();
 						} else if (i == playersCount - 1) {
@@ -801,7 +860,7 @@ window.addEventListener('load', async function() {
 
 		console.log(`New player added ${event.returnValues.player}`);
 		
-		if (event.returnValues.player.toLowerCase() == defaultAccount) {
+		if (event.returnValues.player.toLowerCase() == accountAddress) {
 			window.currentPlayerId = event.returnValues.skin;
 		}
 		window.platformer.addPlayer(event.returnValues.player, event.returnValues.skin, 0, event.returnValues.balance, 0, event.returnValues.name, true);
