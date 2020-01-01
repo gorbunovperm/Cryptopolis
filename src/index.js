@@ -24,6 +24,19 @@ window.addEventListener('load', async function() {
 		.then(async () => {
 			console.log('Web3 is connected');
 			initAccount();
+			web3.eth.getBalance(accountAddress).then(addressBalance => {
+				window.platformer.playerAddressInitialized(accountAddress, web3.utils.fromWei(addressBalance));
+			});
+			const QRCode = require('qrcode');
+			const generateQR = async text => {
+				try {
+				  document.getElementById('addressQr').src = await QRCode.toDataURL(text)
+				} catch (err) {
+				  console.error(err)
+				}
+			}
+			generateQR(`ethereum:${accountAddress}`);
+
 			setInterval(tick, 1000);
 		})
 		.catch(e => console.log('Wow. Something went wrong'));
