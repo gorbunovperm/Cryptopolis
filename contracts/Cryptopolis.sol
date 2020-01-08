@@ -1,6 +1,10 @@
 pragma solidity 0.4.26;
 
 contract Cryptopolis {
+    // bitwise operations
+    uint8 constant PRICE_MASK = 15; // 00001111
+    uint8 constant TYPE_MASK = 240; // 11110000
+
     uint256 private price = 1 ether; // 1 CLO
     uint8 public croupierId;
     uint256 public croupierExpiration;
@@ -10,17 +14,19 @@ contract Cryptopolis {
     address[1000] public winner;
     uint256 public currentGameId;
 
-    uint8 constant fieldsAmount = 30;
+    uint8 constant fieldsAmount = 50;
     uint8 constant maxPlayers = 3;
     uint256 constant buyingRightDuration = 8;
     uint8 constant CROUPIER_DURATION = 6;
     uint256 constant CROUPIER_PENALTY = 50;
     uint256 constant BLOCKS_TO_REGISTER = 40;
+    uint8 constant MIN_FIELD_PRICE = 100;
+    uint8 constant MAX_FIELD_LEVEL = 4;
 
     uint256 constant newRoundReward = 200;
     uint256 constant initialFunds = 1500;
     uint8 constant EMPTY_OWNER = 0;
-    uint256 constant GAME_FEE = 5;
+    uint256 constant GAME_FEE = 10;
     uint8 constant chanceCardsAmount = 3;
     uint8 constant TAX_INCREASING_MOVES = 5;
     uint8 constant TAX_MAX_LEVEL = 10;
@@ -28,7 +34,7 @@ contract Cryptopolis {
     uint256 constant CHANCE_FEE_AMOUNT = 100;
     uint256 constant CHANCE_REWARD_AMOUNT = 150;
 
-    enum FieldTypes { Empty, Company, TaxOffice, Casino}
+    enum FieldTypes { Empty, Company_0, Company_1, Company_2, Company_3, Company_4, TaxOffice, Casino }
     enum ChanceCards { Loss, Win, Teleport }
     enum Reason { CroupierPenalty, FieldSettlement, NewRound, Upgrade, Downgrade, FieldAcquisition, CasinoLosing, CasinoWinning }
 
@@ -47,11 +53,10 @@ contract Cryptopolis {
     uint256 lastEnteredBlock;
 
     struct Field {
-        uint256 payment;
+        uint16 payment;
         uint8 owner; // Player Number
-        uint8 level;
-        FieldTypes fieldType;
-        uint256 price;
+        // Field type plus price field plus level. Tree in one — in order to save memory.
+        uint8 typeAndPrice;
         uint8 buyingRight;
     }
 
@@ -68,11 +73,68 @@ contract Cryptopolis {
     event WeaponsChanged(address player, uint8 weapon_teleport);
     event NewPlayer(address player, uint8 skin, uint256 balance, string name);
     event PlayerLost(address player);
-    event FieldUpdated(uint8 fieldId, uint256 payment, uint8 owner, uint8 level, FieldTypes fieldType, uint256 price, uint8 buyingRight);
+    event FieldUpdated(uint8 fieldId, uint16 payment, uint8 owner, uint8 level, uint8 fieldType, uint256 price, uint8 buyingRight);
     event CasinoResult(address player, uint8 cardType, uint256 value);
     event croupierChanged(uint8 croupierId);
     event TaxLevelUpdated(uint256 taxPercent);
     event Penalty(uint8 playerId);
+
+    function getFieldPrice(uint8 _fieldId) public view returns(uint8) {
+        uint8 typeAndPrice = fields[_fieldId].typeAndPrice;
+        // from 0 to 15
+        uint8 price = typeAndPrice & PRICE_MASK;
+        // from 100 to 250
+        price = MIN_FIELD_PRICE + (price * 10);
+        return price;
+    }
+
+    function getFieldType(uint8 _fieldId) public view returns(uint8) {
+        uint8 typeAndPrice = fields[_fieldId].typeAndPrice;
+        uint8 fieldType = typeAndPrice >> 4;
+        return fieldType;
+    }
+
+    function getFieldLevel(uint8 _fieldId) public view returns(uint8) {
+        uint8 fieldType = getFieldType(_fieldId);
+        if (fieldType <= uint8(FieldTypes.Company_4) && fieldType > 0) {
+            return fieldType - 1;
+        } else {
+            return 0;
+        }
+    }
+
+    function _setFieldPrice(uint8 _fieldId, uint8 _price) internal {
+        uint8 price = (_price - MIN_FIELD_PRICE) / 10;
+        require(price < 16, 'The maximum price value is 250');
+        uint8 typeAndPrice = fields[_fieldId].typeAndPrice;
+        // clear bits with price
+        typeAndPrice = typeAndPrice & TYPE_MASK;
+        typeAndPrice = typeAndPrice | price;
+        fields[_fieldId].typeAndPrice = typeAndPrice;
+    }
+
+    function _setFieldType(uint8 _fieldId, FieldTypes _ft) internal {
+        uint8 _fieldType = uint8(_ft);
+        require(_fieldType < 16, 'The maximum field type value is 15');
+        uint8 typeAndPrice = fields[_fieldId].typeAndPrice;
+        // clear bits with type
+        typeAndPrice = typeAndPrice & PRICE_MASK;
+        uint8 fieldType = _fieldType << 4;
+        typeAndPrice = typeAndPrice | fieldType;
+        fields[_fieldId].typeAndPrice = typeAndPrice;
+    }
+
+    function _setFieldLevel(uint8 _fieldId, uint8 _level) internal {
+        require(_level <= MAX_FIELD_LEVEL, 'The maximum field level value is 4');
+        uint8 fieldType = getFieldType(_fieldId);
+        if (fieldType <= uint8(FieldTypes.Company_4) && fieldType > 0) {
+            fieldType = _level + 1;
+            _setFieldType(_fieldId, FieldTypes(fieldType));
+        } else {
+            revert();
+        }
+    }
+
 
 
     constructor() public {
@@ -91,7 +153,8 @@ contract Cryptopolis {
         _constructor(0);
     }
 
-    function _constructor(uint8 _step) private {
+    function _constructor(uint8 _step) public {
+        require(msg.sender == owner);
         //require(startBlockNumber.length == winner.length, "Previous game is not finished.");
         if (_step == 0) {
             startBlockNumber[currentGameId] = block.number;
@@ -104,82 +167,125 @@ contract Cryptopolis {
             movesMade = 0;
             require(fields.length > 0);
         } else if (_step == 1) {
-            fields[0].fieldType = FieldTypes.Empty;
+            _setFieldType(0, FieldTypes.Empty);
 
-            fields[1].fieldType = FieldTypes.Company;
-            fields[2].fieldType = FieldTypes.Company;
-            fields[3].fieldType = FieldTypes.Company;
+            _setFieldType(1, FieldTypes.Company_0);
+            _setFieldType(2, FieldTypes.Company_0);
+            _setFieldType(3, FieldTypes.Company_0);
 
-            fields[1].price = 100;
-            fields[2].price = 110;
-            fields[3].price = 120;
+            _setFieldPrice(1, 100);
+            _setFieldPrice(2, 110);
+            _setFieldPrice(3, 120);
+            _setFieldPrice(5, 100);
+            _setFieldPrice(6, 110);
+            _setFieldPrice(7, 120);
+            _setFieldPrice(10, 100);
+            _setFieldPrice(11, 110);
+            _setFieldPrice(12, 120);
+            _setFieldPrice(16, 100);
+            _setFieldPrice(17, 110);
+            _setFieldPrice(18, 120);
+            _setFieldPrice(21, 100);
+            _setFieldPrice(22, 110);
+            _setFieldPrice(23, 120);
+            _setFieldPrice(26, 100);
+            _setFieldPrice(27, 110);
+            _setFieldPrice(28, 120);
+            _setFieldPrice(31, 100);
+            _setFieldPrice(32, 110);
+            _setFieldPrice(33, 120);
+            _setFieldPrice(36, 100);
+            _setFieldPrice(37, 110);
+            _setFieldPrice(38, 120);
+            _setFieldPrice(41, 100);
+            _setFieldPrice(42, 110);
+            _setFieldPrice(43, 120);
+            _setFieldPrice(46, 100);
+            _setFieldPrice(47, 110);
+            _setFieldPrice(48, 120);
 
-            fields[4].fieldType = FieldTypes.Casino;
-            fields[8].fieldType = FieldTypes.Casino;
+            _setFieldType(4, FieldTypes.Casino);
+            _setFieldType(8, FieldTypes.Casino);
 
-            fields[5].fieldType = FieldTypes.Company;
-            fields[6].fieldType = FieldTypes.Company;
-            fields[7].fieldType = FieldTypes.Company;
+            _setFieldType(5, FieldTypes.Company_0);
+            _setFieldType(6, FieldTypes.Company_0);
+            _setFieldType(7, FieldTypes.Company_0);
 
-            fields[5].price = 110;
-            fields[6].price = 120;
-            fields[7].price = 130;
 
-            fields[9].fieldType = FieldTypes.TaxOffice;
+            _setFieldType(9, FieldTypes.TaxOffice);
             fields[9].payment = 90;
 
-        } else if(_step == 2) {
-            fields[10].fieldType = FieldTypes.Company;
-            fields[11].fieldType = FieldTypes.Company;
-            fields[12].fieldType = FieldTypes.Company;
+            _setFieldType(10, FieldTypes.Company_0);
+            _setFieldType(11, FieldTypes.Company_0);
+            _setFieldType(12, FieldTypes.Company_0);
 
-            fields[10].price = 130;
-            fields[11].price = 140;
-            fields[12].price = 150;
-
-            fields[13].fieldType = FieldTypes.TaxOffice;
+            _setFieldType(13, FieldTypes.TaxOffice);
             fields[13].payment = 50;
 
-            fields[14].fieldType = FieldTypes.Casino;
+            _setFieldType(14, FieldTypes.Casino);
 
-            fields[15].fieldType = FieldTypes.TaxOffice;
+            _setFieldType(15, FieldTypes.TaxOffice);
             fields[15].payment = 25;
 
-            fields[16].fieldType = FieldTypes.Company;
-            fields[17].fieldType = FieldTypes.Company;
-            fields[18].fieldType = FieldTypes.Company;
+            _setFieldType(16, FieldTypes.Company_0);
+            _setFieldType(17, FieldTypes.Company_0);
+            _setFieldType(18, FieldTypes.Company_0);
 
-            fields[16].price = 140;
-            fields[17].price = 150;
-            fields[18].price = 160;
+            _setFieldType(19, FieldTypes.Casino);
+            _setFieldType(20, FieldTypes.Casino);
 
-            fields[19].fieldType = FieldTypes.Casino;
-        } else if (_step == 3) {
-            fields[20].fieldType = FieldTypes.Casino;
+            _setFieldType(21, FieldTypes.Company_0);
+            _setFieldType(22, FieldTypes.Company_0);
+            _setFieldType(23, FieldTypes.Company_0);
 
-            fields[21].fieldType = FieldTypes.Company;
-            fields[22].fieldType = FieldTypes.Company;
-            fields[23].fieldType = FieldTypes.Company;
+            _setFieldType(24, FieldTypes.Casino);
 
-            fields[21].price = 160;
-            fields[22].price = 170;
-            fields[23].price = 180;
-
-            fields[24].fieldType = FieldTypes.Casino;
-
-            fields[25].fieldType = FieldTypes.TaxOffice;
+            _setFieldType(25, FieldTypes.TaxOffice);
             fields[25].payment = 30;
 
-            fields[26].fieldType = FieldTypes.Company;
-            fields[27].fieldType = FieldTypes.Company;
-            fields[28].fieldType = FieldTypes.Company;
+            _setFieldType(26, FieldTypes.Company_0);
+            _setFieldType(27, FieldTypes.Company_0);
+            _setFieldType(28, FieldTypes.Company_0);
 
-            fields[26].price = 170;
-            fields[27].price = 180;
-            fields[28].price = 190;
 
-            fields[29].fieldType = FieldTypes.TaxOffice;
+            _setFieldType(29, FieldTypes.TaxOffice);
             fields[29].payment = 25;
+
+            _setFieldType(30, FieldTypes.Casino);
+
+            _setFieldType(31, FieldTypes.Company_0);
+            _setFieldType(32, FieldTypes.Company_0);
+            _setFieldType(33, FieldTypes.Company_0);
+
+            _setFieldType(34, FieldTypes.Casino);
+
+            _setFieldType(35, FieldTypes.TaxOffice);
+            fields[35].payment = 30;
+
+            _setFieldType(36, FieldTypes.Company_0);
+            _setFieldType(37, FieldTypes.Company_0);
+            _setFieldType(38, FieldTypes.Company_0);
+
+            _setFieldType(39, FieldTypes.TaxOffice);
+            fields[39].payment = 25;
+
+            _setFieldType(40, FieldTypes.Casino);
+
+            _setFieldType(41, FieldTypes.Company_0);
+            _setFieldType(42, FieldTypes.Company_0);
+            _setFieldType(43, FieldTypes.Company_0);
+
+            _setFieldType(44, FieldTypes.Casino);
+
+            _setFieldType(45, FieldTypes.TaxOffice);
+            fields[45].payment = 30;
+
+            _setFieldType(46, FieldTypes.Company_0);
+            _setFieldType(47, FieldTypes.Company_0);
+            _setFieldType(48, FieldTypes.Company_0);
+
+            _setFieldType(49, FieldTypes.TaxOffice);
+            fields[49].payment = 25;
         }
 
         if (playersEntered == maxPlayers) {
@@ -265,7 +371,7 @@ contract Cryptopolis {
                 field = fields[i];
                 buyingRightExpiration[i] = 0;
                 emit FieldUpdated(
-                    i, field.payment, field.owner, field.level, field.fieldType, field.price, field.buyingRight);
+                    i, field.payment, field.owner, getFieldLevel(i), getFieldType(i), getFieldPrice(i), field.buyingRight);
             }
         }
 
@@ -334,7 +440,8 @@ contract Cryptopolis {
 
     function _updateFieldsTaxes() private {
         for(uint8 i = 0; i < uint8(fields.length); i++) {
-            if (fields[i].fieldType == FieldTypes.Company) {
+            // TODO: isCompany()
+            if (getFieldType(i) <= uint8(FieldTypes.Company_4)) {
                 fields[i].payment = _calculateFieldTax(i);
             }
         }
@@ -381,10 +488,10 @@ contract Cryptopolis {
 
     function _arrival(uint8 _playerId, uint8 _position) private {
         players[_playerId].position = _position;
-        if(fields[_position].fieldType == FieldTypes.Casino) {
+        if(getFieldType(_position) == uint8(FieldTypes.Casino)) {
             _getChance(_position, _playerId);
         } else if (fields[_position].owner != _playerId + 1) {
-            _makePayment(_playerId, fields[_position].payment, _position, Reason.FieldSettlement);
+            _makePayment(_playerId, uint256(fields[_position].payment), _position, Reason.FieldSettlement);
             _changeFieldBuyingRight(players[_playerId].position, _playerId);
         }
     }
@@ -392,20 +499,22 @@ contract Cryptopolis {
     function _changeFieldBuyingRight(uint8 _fieldId, uint8 _playerId) private {
         Field storage field = fields[_fieldId];
         Player storage player = players[_playerId];
-        if (field.fieldType != FieldTypes.Company) return;
+        uint8 fieldType = getFieldType(_fieldId);
+        // TODO: isCompany()
+        if (fieldType > uint8(FieldTypes.Company_4) || fieldType == 0) return;
         if (field.owner != EMPTY_OWNER) return;
         if (field.buyingRight != EMPTY_OWNER) return;
 
         field.buyingRight = _playerId + 1;
         buyingRightExpiration[_fieldId] = block.number + buyingRightDuration;
         emit FieldUpdated(
-            _fieldId, field.payment, field.owner, field.level, field.fieldType, field.price, field.buyingRight);
+            _fieldId, field.payment, field.owner, getFieldLevel(_fieldId), fieldType, getFieldPrice(_fieldId), field.buyingRight);
     }
 
     function _getChance(uint8 _fieldId, uint8 _playerId) private {
         Field storage field = fields[_fieldId];
         Player storage player = players[_playerId];
-        require(field.fieldType == FieldTypes.Casino, "The lottery only works if you stand on the Casino field.");
+        require(getFieldType(_fieldId) == uint8(FieldTypes.Casino), "The lottery only works if you stand on the Casino field.");
 
         uint8 cardNumber = _getChanceCard(player.addr);
 
@@ -446,19 +555,19 @@ contract Cryptopolis {
         Field storage field = fields[_fieldId];
         require(field.owner <= players.length, "Incorrect field for sale. Nonexistent owner.");
         Player storage player = players[field.owner - 1];
-
-        if (field.level == 0) {
+        uint8 level = getFieldLevel(_fieldId);
+        if (level == 0) {
             field.owner = EMPTY_OWNER;
         } else {
-            field.level--;
+            _setFieldLevel(_fieldId, level - 1);
         }
         field.payment = _calculateFieldTax(_fieldId);
-
-        player.balance += field.price / 2;
+        uint8 price = getFieldPrice(_fieldId);
+        player.balance += price / 2;
 
         emit FieldUpdated(
-            _fieldId, field.payment, field.owner, field.level, field.fieldType, field.price, field.buyingRight);
-        emit BalanceChanged(player.addr, player.balance, int256(field.price / 2), _fieldId, Reason.Downgrade);
+            _fieldId, field.payment, field.owner, getFieldLevel(_fieldId), getFieldType(_fieldId), price, field.buyingRight);
+        emit BalanceChanged(player.addr, player.balance, int256(price / 2), _fieldId, Reason.Downgrade);
     }
 
     function _buyField(uint8 _fieldId, uint8 _playerId) private {
@@ -467,46 +576,52 @@ contract Cryptopolis {
 
         field.owner = _playerId + 1;
         field.buyingRight = EMPTY_OWNER;
-        _makePayment(_playerId, field.price, _fieldId, Reason.FieldAcquisition);
+        _makePayment(_playerId, getFieldPrice(_fieldId), _fieldId, Reason.FieldAcquisition);
     }
 
     function buildUp (uint8 _fieldId) public {
 
         require(playerNumber[msg.sender] > 0, "You are not a member of this party ;)");
         Field storage field = fields[_fieldId];
-        require(field.level < 4, "Maximum level of building is 4.");
-        require(field.fieldType == FieldTypes.Company, "Only a Company can be upgraded.");
+        uint8 level = getFieldLevel(_fieldId);
+        require(level < MAX_FIELD_LEVEL, "Maximum level of building is 4.");
+        uint8 fieldType = getFieldType(_fieldId);
+        // TODO: isCompany
+        require(fieldType <= uint8(FieldTypes.Company_4), "Only a Company can be upgraded.");
 
         uint8 number = playerNumber[msg.sender];
         uint8 playerId = number - 1;
         Player memory player = players[playerId];
-        require(player.balance >= field.price, "Not enough funds.");
+        uint8 price = getFieldPrice(_fieldId);
+        require(player.balance >= price, "Not enough funds.");
 
         if (field.owner == EMPTY_OWNER) {
             _buyField(_fieldId, playerId);
         } else {
             require(number == field.owner, "Only owner of the field can upgrade it.");
-            _makePayment(playerId, field.price, _fieldId, Reason.Upgrade);
-            field.level++;
+            _makePayment(playerId, price, _fieldId, Reason.Upgrade);
+            _setFieldLevel(_fieldId, level + 1);
         }
 
         field.payment = _calculateFieldTax(_fieldId);
 
         emit FieldUpdated(
-            _fieldId, field.payment, field.owner, field.level, field.fieldType, field.price, field.buyingRight);
+            _fieldId, field.payment, field.owner, getFieldLevel(_fieldId), fieldType, price, field.buyingRight);
     }
 
-    function _calculateFieldTax(uint8 _fieldId) private view returns(uint256 tax) {
+    function _calculateFieldTax(uint8 _fieldId) private view returns(uint16 tax) {
         Field storage field = fields[_fieldId];
-        require(field.fieldType == FieldTypes.Company, "Only Company field need to calculate tax.");
+        // TODO: isCompany
+        require(getFieldType(_fieldId) <= uint8(FieldTypes.Company_4), "Only Company field need to calculate tax.");
         if (field.owner == EMPTY_OWNER) {
             return 0;
         }
 
         //uint256 basePayment = field.price / 50;
-        uint256 multiplier = getLevelMultiplier(field.level);
+        uint256 multiplier = getLevelMultiplier(getFieldLevel(_fieldId));
+        uint256 price = uint256(getFieldPrice(_fieldId));
 
-        tax = field.price * multiplier * (100 + taxIncreasingPercent * taxLevel) / 100 / 50;
+        tax = uint16(price * multiplier * (100 + taxIncreasingPercent * taxLevel) / 100 / 50);
         return tax;
     }
 
@@ -571,12 +686,12 @@ contract Cryptopolis {
     }
 
     function getFields(uint8 _fieldId) public view
-    returns(uint256 payment, uint8 owner, uint8 level, FieldTypes fieldType, uint256 price, uint8 buyingRight) {
+    returns(uint16 payment, uint8 owner, uint8 level, uint8 fieldType, uint256 price, uint8 buyingRight) {
         payment = fields[_fieldId].payment;
         owner = fields[_fieldId].owner;
-        level = fields[_fieldId].level;
-        fieldType = fields[_fieldId].fieldType;
-        price = fields[_fieldId].price;
+        level = getFieldLevel(_fieldId);
+        fieldType = getFieldType(_fieldId);
+        price = getFieldPrice(_fieldId);
         buyingRight = fields[_fieldId].buyingRight;
     }
 

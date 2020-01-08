@@ -9,9 +9,14 @@ var platformer = (() => { // module pattern
     let logsMessages = {};
 
     const FIELD_EMPTY = 0;
-    const FIELD_COMPANY = 1;
-    const FIELD_FEE = 2;
-    const FIELD_CHANCE = 3;
+    const FIELD_COMPANY_0 = 1;
+    const FIELD_COMPANY_1 = 2;
+    const FIELD_COMPANY_2 = 3;
+    const FIELD_COMPANY_3 = 4;
+    const FIELD_COMPANY_4 = 5;
+    const FIELD_FEE = 6;
+    const FIELD_CHANCE = 7;
+
 
     const EMPTY_OWNER = 0;
 

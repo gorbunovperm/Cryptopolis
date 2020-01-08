@@ -32,3 +32,14 @@ Game with 2 players and 20 fields finished in 20 mnutes.
 
 Gas spended for game: 1) 0.00823931 ether 2) 0.011633735 ether
 
+Gas used for contract creation with 50 fields: 5,183,862 + 546,672 + 354,686 + 1,505,063 = 7,590,283 (Before optimization)
+
+Gas used for contract creation with 50 fields: 4,707,467 + 508,936 + 1,379,061 = 6'595'464 (After optimization)
+
+Gas used for contract creation with 50 fields: 4,755,059 + 424,036 + 1,379,083 = 6'558'178 (After second optimization)
+
+Gas used for contract creation with 50 fields: 4,822,518 + 467,664 + 1,212,608 = 6'502'790  (After third optimization)
+
+
+
+
