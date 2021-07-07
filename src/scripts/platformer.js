@@ -27,6 +27,11 @@ var platformer = (() => { // module pattern
 
     const Reason = { CroupierPenalty: 0, FieldSettlement: 1, NewRound: 2, Upgrade: 3, Downgrade: 4, FieldAcquisition: 5, CasinoLosing: 6, CasinoWinning: 7 };
 
+    let playerAddressInitialized = (address, balance, qrcode) => {
+        document.getElementById('managingAddress').innerText = address;
+        document.getElementById('addressBalance').innerHTML = balance + ' ETH';
+    };
+
     let drawFields = (map) => {
         fields = map.fields;
 
@@ -736,6 +741,7 @@ var platformer = (() => { // module pattern
         playerLost: playerLost,
         taxLevelUpdated: taxLevelUpdated,
         toggleMakeMovesBtn: toggleMakeMovesBtn,
-        updateCroupierExpiration: updateCroupierExpiration
+        updateCroupierExpiration: updateCroupierExpiration,
+        playerAddressInitialized: playerAddressInitialized
     }
 })();

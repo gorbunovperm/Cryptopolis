@@ -6,6 +6,7 @@
   "author": "Alexander Gorbunov",
   "license": "MIT",
   "dependencies": {
+    "qrcode": "^1.4.4",
     "web3": "^1.2.1",
     "webpack": "^4.41.1",
     "webpack-cli": "^3.3.9"
